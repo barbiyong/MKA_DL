@@ -1,6 +1,7 @@
 import numpy as np
 import pandas
 import json
+import time
 from collections import OrderedDict
 
 
@@ -63,8 +64,8 @@ def get_stock_active_name_list():
 
 
 def main():
-    # stock_names = get_stock_active_name_list()
-    stock_names = ['AOT']
+    stock_names = get_stock_active_name_list()
+    # stock_names = ['AOT']
     for s in stock_names:
         print('get data of stock : '+s)
         with open("files/"+s+"_120.json", "w") as outfile_2h:
@@ -76,4 +77,18 @@ def main():
         with open("files/"+s+"_month.json", "w") as outfile_month:
             json.dump(get_stock_data(s, 'month'), outfile_month)
 
-# main()
+
+def check_data_is_up_to_date():
+    f = open('files/log', 'r')
+    first_line = f.readline()
+    f.close()
+
+    if str(first_line) == str(time.strftime("%Y/%m/%d")):
+        print('\n --- All data is up to date ---')
+    else:
+        print('File is not up to date \n update files...')
+        main()
+        f = open('files/log', 'w')
+        f.write(time.strftime("%Y/%m/%d"))
+        f.close()
+        print('\n --- All data is up to date ---')

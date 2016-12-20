@@ -1,30 +1,46 @@
 import json
 import time
 
-import save_ohlc
 
-def get_data(stock_name):
+def get_data(stock_name, tf, first_date, last_date):
 
-    dohlcv_120 = json.loads(open("files/" + stock_name + "_120.json").read())
-    dohlcv_day = json.loads(open("files/" + stock_name + "_day.json").read())
-    dohlcv_week = json.loads(open("files/" + stock_name + "_week.json").read())
-    dohlcv_month = json.loads(open("files/" + stock_name + "_month.json").read())
-    return dohlcv_120, dohlcv_day, dohlcv_week, dohlcv_month
-
-
-def check_data_is_up_to_date():
-    f = open('files/log', 'r')
-    first_line = f.readline()
-    f.close()
-
-    if str(first_line) == str(time.strftime("%Y/%m/%d")):
-        print('\n --- All data is up to date ---')
+    dohlcv = json.loads(open("files/" + stock_name + "_" + tf + ".json").read())
+    if last_date == 0:
+        try:
+            last_date_index = -2
+        except TypeError:
+            return None
+        except ValueError:
+            return None
     else:
-        print('File is not up to date \n update files...')
-        save_ohlc.main()
-        f = open('files/log', 'w')
-        f.write(time.strftime("%Y/%m/%d"))
-        f.close()
-        print('\n --- All data is up to date ---')
+        try:
+            last_date_index = dohlcv['date'].index(last_date)
+        except TypeError:
+            return None
+        except ValueError:
+            return None
+    # print(last_date_index)
+    if first_date == 0:
+        try:
+            first_date_index = 0
+        except TypeError:
+            return None
+        except ValueError:
+            return None
+    else:
+        try:
+            first_date_index = dohlcv['date'].index(first_date)
+        except TypeError:
+            return None
+        except ValueError:
+            return None
+    # print(first_date_index)
 
-check_data_is_up_to_date()
+    dohlcv['date'] = dohlcv['date'][first_date_index:last_date_index+1]
+    dohlcv['open'] = dohlcv['open'][first_date_index:last_date_index+1]
+    dohlcv['close'] = dohlcv['close'][first_date_index:last_date_index+1]
+    dohlcv['high'] = dohlcv['high'][first_date_index:last_date_index+1]
+    dohlcv['low'] = dohlcv['low'][first_date_index:last_date_index+1]
+    dohlcv['volume'] = dohlcv['volume'][first_date_index:last_date_index+1]
+
+    return dohlcv

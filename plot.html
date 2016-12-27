@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h2>Create Object from JSON String</h2>
+
+<script src="file://c:\\data\\activity.jsonp"></script>
+<script type="text/javascript">
+  function updateMe(){
+    var x = 0;
+    var activity=jsonstr;
+    foreach (i in activity) {
+        date = document.getElementById(i.date).innerHTML = activity.date;
+        event = document.getElementById(i.event).innerHTML = activity.event;
+    }
+  }
+</script>
+
+</body>
+</html>
